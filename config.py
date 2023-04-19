@@ -6,11 +6,13 @@ ENEMY_LAYER = 3
 BLOCK_LAYER = 2
 GROUND_LAYER = 1
 
+HS_FILE = 'highscore.txt'
+
 PLAYER_SPEED = 3
 ENEMY_SPEED = 2
 
 TILESIZE = 32
-FPS = 60
+FPS = 120
 
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)

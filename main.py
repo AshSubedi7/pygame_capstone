@@ -3,6 +3,7 @@ from pygame import mixer
 from sprites import *
 from config import *
 from tilemap import *
+from os import path
 import sys
 
 pygame.mixer.init()
@@ -11,6 +12,7 @@ pygame.mixer.music.play(-1)
 
 class Game:
     def __init__(self):
+        
         pygame.init()
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
@@ -22,6 +24,7 @@ class Game:
         self.enemy_spritesheet = Spritesheet('img/enemy.png')
         self.intro_background = pygame.image.load('img/bread_pixel.png')
         self.go_background = pygame.image.load('./img/gameover.png')
+        self.attack_spritesheet = Spritesheet('img/attack.png')
 
     def createTilemap(self):
         for i, row in enumerate(tilemap):
@@ -34,7 +37,7 @@ class Game:
                 if column == "V":
                     Enemy_vertical(self, j, i)
                 if column == "P":
-                    Player(self, j, i)
+                    self.player = Player(self, j, i)
 
     def new(self):
         
@@ -55,6 +58,17 @@ class Game:
                 self.playing = False
                 self.running = False
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    if self.player.facing == 'up':
+                        attack(self, self.player.rect.x, self.player.rect.y - TILESIZE)
+                    if self.player.facing == 'down':
+                        attack(self, self.player.rect.x, self.player.rect.y + TILESIZE)
+                    if self.player.facing == 'left':
+                        attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
+                    if self.player.facing == 'right':
+                        attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
+
     def update(self):
         #game loop updates
         self.all_sprites.update()
@@ -67,11 +81,23 @@ class Game:
         pygame.display.update()
 
     def main(self):
+        score = 0
+        score_increment = 1
         #game loop
         while self.playing:
             self.events()
             self.update()
             self.draw()
+
+            if self.player.collide_enemy:
+                score += score_increment
+
+            score_font = self.font.render('Score: ' + str(score), False, WHITE)
+            score_font_rect = score_font.get_rect(x = 385, y = 5)
+
+            self.screen.blit(score_font, score_font_rect)
+            self.clock.tick(FPS)
+            pygame.display.update()
 
     def game_over(self):
         text = self.font.render('Game Over', True, WHITE)
