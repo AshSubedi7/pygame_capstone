@@ -3,7 +3,7 @@ from pygame import mixer
 from sprites import *
 from config import *
 from tilemap import *
-from os import path
+from os import *
 import sys
 
 pygame.mixer.init()
@@ -11,6 +11,9 @@ music = pygame.mixer.music.load('fantasy_music.ogg')
 pygame.mixer.music.play(-1)
 
 class Game:
+    score = 0
+    score_increment = 1
+
     def __init__(self):
         
         pygame.init()
@@ -43,6 +46,7 @@ class Game:
         
         # a new game starts
         self.playing = True
+        self.score = 0
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
@@ -81,18 +85,15 @@ class Game:
         pygame.display.update()
 
     def main(self):
-        score = 0
-        score_increment = 1
         #game loop
         while self.playing:
             self.events()
             self.update()
             self.draw()
 
-            if self.player.collide_enemy:
-                score += score_increment
+            self.score += len(pygame.sprite.spritecollide(self.player, self.enemies, True))
 
-            score_font = self.font.render('Score: ' + str(score), False, WHITE)
+            score_font = self.font.render('Score: ' + str(self.score), False, WHITE)
             score_font_rect = score_font.get_rect(x = 385, y = 5)
 
             self.screen.blit(score_font, score_font_rect)

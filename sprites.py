@@ -386,6 +386,8 @@ class attack(pygame.sprite.Sprite):
 
     def collide(self):
         hit = pygame.sprite.spritecollide(self, self.game.enemies, True)
+        if hit:
+            self.game.score += self.game.score_increment
 
     def animate(self):
         direction = self.game.player.facing
